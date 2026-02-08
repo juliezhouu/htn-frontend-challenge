@@ -16,9 +16,22 @@ export function SpaceHero({
   setSelectedCategory,
   categories,
 }: SpaceHeroProps) {
+  // generate a small starfield 
+  const stars = Array.from({ length: 64 }).map((_, i) => {
+    const size = +(Math.random() * 2.6 + 0.6).toFixed(2);
+    const left = +(Math.random() * 100).toFixed(2);
+    const top = +(Math.random() * 100).toFixed(2);
+    const delay = +(Math.random() * 12).toFixed(2);
+    const duration = +(4 + Math.random() * 8).toFixed(2);
+    const opacity = +(0.25 + Math.random() * 0.75).toFixed(2);
+    return { id: `s-${i}`, size, left, top, delay, duration, opacity };
+  });
+
+
+
   return (
     <div className="relative h-[450px] overflow-hidden bg-gradient-to-b from-[#0b0e14] via-[#1a1525] to-[#0b0e14]">
-      {/* Subtle gradient orbs */}
+      {/* gradient orbs */}
       <motion.div
         className="absolute top-[-10%] left-[-5%] w-[500px] h-[500px] rounded-full opacity-20"
         style={{
@@ -93,15 +106,34 @@ export function SpaceHero({
         <rect width="100%" height="100%" fill="url(#grid)" />
       </svg>
 
-      {/* Minimal constellation lines */}
+      {/* Starfield (sparkling stars) */}
+      <div className="starfield z-20">
+        {stars.map((s) => (
+          <div
+            key={s.id}
+            className="star"
+            style={{
+              left: `${s.left}%`,
+              top: `${s.top}%`,
+              width: `${s.size}px`,
+              height: `${s.size}px`,
+              opacity: s.opacity,
+              animationDelay: `${s.delay}s, ${s.delay / 2}s`,
+              animationDuration: `${s.duration}s, ${s.duration * 1.6}s`,
+            }}
+          />
+        ))}
+      </div>
+
+      {/*  constellation lines */}
       <svg className="absolute inset-0 w-full h-full opacity-30" viewBox="0 0 1200 450">
         <motion.line
           x1="200" y1="80" x2="350" y2="120"
           stroke="url(#lineGradient)"
-          strokeWidth="1"
+          strokeWidth="2"
           initial={{ pathLength: 0 }}
           animate={{ pathLength: 1 }}
-          transition={{ duration: 2, repeat: Infinity, repeatType: 'reverse' }}
+          transition={{ duration: 3, repeat: Infinity, repeatType: 'reverse' }}
         />
         <motion.line
           x1="350" y1="120" x2="500" y2="100"
