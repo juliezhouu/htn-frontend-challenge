@@ -1,5 +1,39 @@
 import { motion } from 'motion/react';
 import { Search, Filter } from 'lucide-react';
+import { useState, useEffect } from 'react';
+
+import planetImg from '../assets/images/planet.png';
+import princeImg from '../assets/images/petitprince-removebg-preview.png';
+import moonImg from '../assets/images/moon.jpg';
+import starImg from '../assets/images/star.jpg';
+import shineImg from '../assets/images/shine.jpg';
+
+// get rid of white background from imgs 
+function useTransparentImage(src: string, threshold = 230) {
+  const [dataUrl, setDataUrl] = useState<string | null>(null);
+  useEffect(() => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = img.width;
+      canvas.height = img.height;
+      const ctx = canvas.getContext('2d')!;
+      ctx.drawImage(img, 0, 0);
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const d = imageData.data;
+      for (let i = 0; i < d.length; i += 4) {
+        if (d[i] > threshold && d[i + 1] > threshold && d[i + 2] > threshold) {
+          d[i + 3] = 0;
+        }
+      }
+      ctx.putImageData(imageData, 0, 0);
+      setDataUrl(canvas.toDataURL());
+    };
+    img.src = src;
+  }, [src, threshold]);
+  return dataUrl;
+}
 
 interface SpaceHeroProps {
   searchQuery: string;
@@ -16,7 +50,11 @@ export function SpaceHero({
   setSelectedCategory,
   categories,
 }: SpaceHeroProps) {
-  // generate a small starfield 
+  const moonTransparent = useTransparentImage(moonImg);
+  const starTransparent = useTransparentImage(starImg);
+  const shineTransparent = useTransparentImage(shineImg);
+
+  // generate a small starfield
   const stars = Array.from({ length: 64 }).map((_, i) => {
     const size = Math.random() < 0.8
       ? +(Math.random() * 2 + 1).toFixed(2)
@@ -130,32 +168,75 @@ export function SpaceHero({
         ))}
       </div>
 
-      {/*  constellation lines */}
-      <svg className="absolute inset-0 w-full h-full opacity-30" viewBox="0 0 1200 450">
-        <motion.line
-          x1="120" y1="60" x2="420" y2="110"
-          stroke="url(#lineGradient)"
-          strokeWidth="2.2"
-          initial={{ pathLength: 0 }}
-          animate={{ pathLength: 1 }}
-          transition={{ duration: 6, repeat: Infinity, repeatType: 'loop', ease: 'easeInOut' }}
+      {/* rotating planet + prince appear together */}
+      <motion.div
+        className="absolute right-[3%] bottom-[5%] z-20 w-[240px] h-[240px] md:w-[300px] md:h-[300px]"
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1, delay: 0.3 }}
+      >
+        <div
+          className="w-full h-full"
+          style={{ animation: 'spin-slow 40s linear infinite' }}
+        >
+          <img
+            src={planetImg}
+            alt=""
+            className="w-full h-full object-contain drop-shadow-[0_0_25px_rgba(168,85,247,0.4)]"
+          />
+        </div>
+        {/* prince */}
+        <img
+          src={princeImg}
+          alt="The Little Prince"
+          className="absolute top-[-25%] left-1/2 -translate-x-1/2 w-[45%] object-contain drop-shadow-[0_0_15px_rgba(255,200,80,0.5)] -scale-x-100"
         />
-        <motion.line
-          x1="700" y1="80" x2="1100" y2="170"
-          stroke="url(#lineGradient)"
-          strokeWidth="2.8"
-          initial={{ pathLength: 0 }}
-          animate={{ pathLength: 1 }}
-          transition={{ duration: 7, repeat: Infinity, repeatType: 'loop', ease: 'easeInOut', delay: 2.2 }}
-        />
-        <defs>
-          <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#a855f7" stopOpacity="0.2" />
-            <stop offset="50%" stopColor="#06b6d4" stopOpacity="0.6" />
-            <stop offset="100%" stopColor="#ec4899" stopOpacity="0.2" />
-          </linearGradient>
-        </defs>
-      </svg>
+      </motion.div>
+
+      {/* dangling elements hanging from top */}
+      {[
+        { img: moonTransparent, left: '8%', width: 80, stringH: 160, delay: 0, anim: 'dangle', dur: '5s' },
+        { img: starTransparent, left: '22%', width: 40, stringH: 130, delay: 0.8, anim: 'dangle-alt', dur: '4.5s' },
+        { img: shineTransparent, left: '68%', width: 38, stringH: 60, delay: 1.5, anim: 'dangle', dur: '6s' },
+        { img: starTransparent, left: '94%', width: 32, stringH: 170, delay: 0.4, anim: 'dangle-alt', dur: '5.5s' },
+        { img: shineTransparent, left: '40%', width: 28, stringH: 50, delay: 1.2, anim: 'dangle', dur: '4s' },
+      ].map((item, i) => (
+        <motion.div
+          key={i}
+          className="absolute top-0 z-20"
+          style={{
+            left: item.left,
+            transformOrigin: 'top center',
+            animation: `${item.anim} ${item.dur} ease-in-out infinite`,
+            animationDelay: `${item.delay}s`,
+          }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1, delay: item.delay }}
+        >
+          {/* glowy string */}
+          <div
+            className="mx-auto w-[1px]"
+            style={{
+              height: item.stringH,
+              background: 'linear-gradient(to bottom, rgba(168,85,247,0.6), rgba(255,200,80,0.3))',
+              boxShadow: '0 0 6px rgba(168,85,247,0.4)',
+            }}
+          />
+          {/* hanging image */}
+          {item.img && (
+            <img
+              src={item.img}
+              alt=""
+              className="object-contain"
+              style={{
+                width: item.width,
+                filter: 'drop-shadow(0 0 12px rgba(255,200,80,0.5))',
+              }}
+            />
+          )}
+        </motion.div>
+      ))}
 
       {/* Content section */}
       <div className="relative z-30 flex flex-col items-center justify-center h-full px-6">
