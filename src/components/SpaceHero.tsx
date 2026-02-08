@@ -60,7 +60,7 @@ export function SpaceHero({
       ? +(Math.random() * 2 + 1).toFixed(2)
       : +(Math.random() * 3 + 4).toFixed(2);
     const left = +(Math.random() * 100).toFixed(2);
-    const top = +(Math.random() * 100).toFixed(2);
+    const top = +(Math.random() * 55).toFixed(2);
     const delay = +(Math.random() * 12).toFixed(2);
     // big stars: slower, steadier glow
     const duration = size > 3 ? +(12 + Math.random() * 6).toFixed(2) : +(4 + Math.random() * 8).toFixed(2);
@@ -198,7 +198,7 @@ export function SpaceHero({
         { img: moonTransparent, left: '8%', width: 80, stringH: 160, delay: 0, anim: 'dangle', dur: '5s' },
         { img: starTransparent, left: '22%', width: 40, stringH: 130, delay: 0.8, anim: 'dangle-alt', dur: '4.5s' },
         { img: shineTransparent, left: '68%', width: 38, stringH: 60, delay: 1.5, anim: 'dangle', dur: '6s' },
-        { img: starTransparent, left: '94%', width: 32, stringH: 170, delay: 0.4, anim: 'dangle-alt', dur: '5.5s' },
+        { img: starTransparent, left: '94%', width: 50, stringH: 170, delay: 0.4, anim: 'dangle-alt', dur: '5.5s' },
         { img: shineTransparent, left: '40%', width: 28, stringH: 50, delay: 1.2, anim: 'dangle', dur: '4s' },
       ].map((item, i) => (
         <motion.div
