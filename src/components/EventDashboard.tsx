@@ -1,12 +1,15 @@
 import { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
-import { EventCard } from './EventCard';
+import { DndContext, closestCenter, DragEndEvent } from '@dnd-kit/core';
+import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import { SortableEventCard } from './SortableEventCard';
 import { EventDetailView } from './EventDetailView';
 import { HTNHeader } from './HTNHeader';
 import { HTNFooter } from './HTNFooter';
 import { SpaceHero } from './SpaceHero';
 import { LoginModal } from './LoginModal';
 import { Event, APIEvent, transformAPIEvent } from './types';
+import { useEventOrder } from '../hooks/useEventOrder';
 
 export function EventDashboard() {
   const [events, setEvents] = useState<Event[]>([]);
@@ -16,11 +19,11 @@ export function EventDashboard() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
 
-  // Login state
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
 
-  // Fetch events from the API
+  const { orderedEvents, reorderEvents } = useEventOrder(events);
+
   useEffect(() => {
     const fetchEvents = async () => {
       try {
@@ -33,7 +36,6 @@ export function EventDashboard() {
 
         const data: APIEvent[] = await response.json();
 
-        // Sort events by start_time and transform to UI format
         const sortedEvents = data
           .sort((a, b) => a.start_time - b.start_time)
           .map(transformAPIEvent);
@@ -42,7 +44,6 @@ export function EventDashboard() {
         setError(null);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'An error occurred');
-        console.error('Error fetching events:', err);
       } finally {
         setLoading(false);
       }
@@ -51,36 +52,29 @@ export function EventDashboard() {
     fetchEvents();
   }, []);
 
-  // Get unique categories from events
   const categories = ['All', ...Array.from(new Set(events.map(event => event.category)))];
 
-  // Filter events based on login status, search query, and category
-  const filteredEvents = events.filter(event => {
-    // First, filter by permission
+  const filteredEvents = orderedEvents.filter(event => {
+    // private events require login
     const hasPermission = isLoggedIn || !event.permission || event.permission === 'public';
-
     if (!hasPermission) return false;
 
-    // Filter by category
     const matchesCategory = selectedCategory === 'All' || event.category === selectedCategory;
-
     if (!matchesCategory) return false;
 
-    // Then, filter by search query
     if (!searchQuery.trim()) return true;
 
     const query = searchQuery.toLowerCase();
-    const matchesTitle = event.title.toLowerCase().includes(query);
-    const matchesDescription = event.description?.toLowerCase().includes(query);
-    const matchesCategory2 = event.category.toLowerCase().includes(query);
-    const matchesSpeakers = event.speakers?.some(speaker =>
-      speaker.name.toLowerCase().includes(query)
+    return (
+      event.title.toLowerCase().includes(query) ||
+      event.description?.toLowerCase().includes(query) ||
+      event.category.toLowerCase().includes(query) ||
+      event.speakers?.some(speaker => speaker.name.toLowerCase().includes(query))
     );
-
-    return matchesTitle || matchesDescription || matchesCategory2 || matchesSpeakers;
   });
 
   const handleLogin = (username: string, password: string): boolean => {
+    // hardcoded for demo
     if (username === 'hacker' && password === 'htn2026') {
       setIsLoggedIn(true);
       setShowLoginModal(false);
@@ -93,9 +87,15 @@ export function EventDashboard() {
     setIsLoggedIn(false);
   };
 
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (over && active.id !== over.id) {
+      reorderEvents(active.id as number, over.id as number);
+    }
+  };
+
   const selectedEventData = events.find(e => e.id === selectedEvent);
 
-  // Loading state
   if (loading) {
     return (
       <div className="min-h-screen bg-[#0b0e14] flex items-center justify-center">
@@ -115,7 +115,6 @@ export function EventDashboard() {
     );
   }
 
-  // Error state
   if (error) {
     return (
       <div className="min-h-screen bg-[#0b0e14] flex items-center justify-center">
@@ -138,14 +137,12 @@ export function EventDashboard() {
 
   return (
     <div className="min-h-screen text-white bg-[#0b0e14]">
-      {/* Header */}
       <HTNHeader
         isLoggedIn={isLoggedIn}
         onLogin={() => setShowLoginModal(true)}
         onLogout={handleLogout}
       />
 
-      {/* Space Hero Banner */}
       <SpaceHero
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
@@ -154,7 +151,6 @@ export function EventDashboard() {
         categories={categories}
       />
 
-      {/* Event Count */}
       <div className="max-w-7xl mx-auto px-6 py-4">
         <motion.p
           className="text-gray-400 text-sm"
@@ -170,33 +166,35 @@ export function EventDashboard() {
         </motion.p>
       </div>
 
-      {/* Event List */}
       <main className="max-w-7xl mx-auto px-6 pb-12">
-        <motion.div
-          className="bg-[#0f1117]/50 backdrop-blur-sm rounded-2xl border border-white/5 overflow-hidden"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-        >
-          {filteredEvents.length > 0 ? (
-            filteredEvents.map((event, index) => (
-              <EventCard
-                key={event.id}
-                event={event}
-                onViewDetails={() => setSelectedEvent(event.id)}
-                isLast={index === filteredEvents.length - 1}
-              />
-            ))
-          ) : (
-            <div className="p-12 text-center text-gray-400">
-              <p className="text-lg mb-2">No events found</p>
-              <p className="text-sm">Try adjusting your search or filters</p>
-            </div>
-          )}
-        </motion.div>
+        <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+          <motion.div
+            className="bg-[#0f1117]/50 backdrop-blur-sm rounded-2xl border border-white/5 overflow-hidden"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+          >
+            {filteredEvents.length > 0 ? (
+              <SortableContext items={filteredEvents.map(e => e.id)} strategy={verticalListSortingStrategy}>
+                {filteredEvents.map((event, index) => (
+                  <SortableEventCard
+                    key={event.id}
+                    event={event}
+                    onViewDetails={() => setSelectedEvent(event.id)}
+                    isLast={index === filteredEvents.length - 1}
+                  />
+                ))}
+              </SortableContext>
+            ) : (
+              <div className="p-12 text-center text-gray-400">
+                <p className="text-lg mb-2">No events found</p>
+                <p className="text-sm">Try adjusting your search or filters</p>
+              </div>
+            )}
+          </motion.div>
+        </DndContext>
       </main>
 
-      {/* Event Detail Sidebar */}
       <AnimatePresence>
         {selectedEvent !== null && selectedEventData && (
           <EventDetailView
@@ -208,7 +206,6 @@ export function EventDashboard() {
         )}
       </AnimatePresence>
 
-      {/* Login Modal */}
       <AnimatePresence>
         {showLoginModal && (
           <LoginModal
@@ -218,7 +215,6 @@ export function EventDashboard() {
         )}
       </AnimatePresence>
 
-      {/* Footer */}
       <HTNFooter />
     </div>
   );

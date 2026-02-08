@@ -18,13 +18,18 @@ export function SpaceHero({
 }: SpaceHeroProps) {
   // generate a small starfield 
   const stars = Array.from({ length: 64 }).map((_, i) => {
-    const size = +(Math.random() * 2.6 + 0.6).toFixed(2);
+    const size = Math.random() < 0.8
+      ? +(Math.random() * 2 + 1).toFixed(2)
+      : +(Math.random() * 3 + 4).toFixed(2);
     const left = +(Math.random() * 100).toFixed(2);
     const top = +(Math.random() * 100).toFixed(2);
     const delay = +(Math.random() * 12).toFixed(2);
-    const duration = +(4 + Math.random() * 8).toFixed(2);
-    const opacity = +(0.25 + Math.random() * 0.75).toFixed(2);
-    return { id: `s-${i}`, size, left, top, delay, duration, opacity };
+    // big stars: slower, steadier glow
+    const duration = size > 3 ? +(12 + Math.random() * 6).toFixed(2) : +(4 + Math.random() * 8).toFixed(2);
+    const minOpacity = size > 3 ? 0.7 : 0.5;
+    const maxOpacity = size > 3 ? 0.9 : 1;
+    const opacity = +(minOpacity + Math.random() * (maxOpacity - minOpacity)).toFixed(2);
+    return { id: `s-${i}`, size, left, top, delay, duration, opacity, minOpacity, maxOpacity };
   });
 
 
@@ -120,7 +125,7 @@ export function SpaceHero({
               opacity: s.opacity,
               animationDelay: `${s.delay}s, ${s.delay / 2}s`,
               animationDuration: `${s.duration}s, ${s.duration * 1.6}s`,
-            }}
+            } as React.CSSProperties}
           />
         ))}
       </div>
@@ -128,28 +133,20 @@ export function SpaceHero({
       {/*  constellation lines */}
       <svg className="absolute inset-0 w-full h-full opacity-30" viewBox="0 0 1200 450">
         <motion.line
-          x1="200" y1="80" x2="350" y2="120"
+          x1="120" y1="60" x2="420" y2="110"
           stroke="url(#lineGradient)"
-          strokeWidth="2"
+          strokeWidth="2.2"
           initial={{ pathLength: 0 }}
           animate={{ pathLength: 1 }}
-          transition={{ duration: 3, repeat: Infinity, repeatType: 'reverse' }}
+          transition={{ duration: 6, repeat: Infinity, repeatType: 'loop', ease: 'easeInOut' }}
         />
         <motion.line
-          x1="350" y1="120" x2="500" y2="100"
+          x1="700" y1="80" x2="1100" y2="170"
           stroke="url(#lineGradient)"
-          strokeWidth="1"
+          strokeWidth="2.8"
           initial={{ pathLength: 0 }}
           animate={{ pathLength: 1 }}
-          transition={{ duration: 2, repeat: Infinity, repeatType: 'reverse', delay: 0.5 }}
-        />
-        <motion.line
-          x1="800" y1="90" x2="950" y2="130"
-          stroke="url(#lineGradient)"
-          strokeWidth="1"
-          initial={{ pathLength: 0 }}
-          animate={{ pathLength: 1 }}
-          transition={{ duration: 2, repeat: Infinity, repeatType: 'reverse', delay: 1 }}
+          transition={{ duration: 7, repeat: Infinity, repeatType: 'loop', ease: 'easeInOut', delay: 2.2 }}
         />
         <defs>
           <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -202,34 +199,7 @@ export function SpaceHero({
               ease: 'easeInOut',
             }}
           >
-            <span>Hack the N</span>
-            <span className="relative inline-block">
-              <span>o</span>
-              <motion.div
-                className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
-                animate={{
-                  opacity: [0, 1, 0],
-                  scale: [0.5, 1.2, 0.5],
-                  rotate: [0, 90, 180],
-                }}
-                transition={{
-                  duration: 2,
-                  repeat: Infinity,
-                  ease: 'easeInOut',
-                }}
-              >
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                  <path
-                    d="M10 0L11.5 6.5L18 5L12.5 10L18 15L11.5 13.5L10 20L8.5 13.5L2 15L7.5 10L2 5L8.5 6.5L10 0Z"
-                    fill="white"
-                    style={{
-                      filter: 'drop-shadow(0 0 4px rgba(255,255,255,0.8)) drop-shadow(0 0 8px rgba(168,85,247,0.6))',
-                    }}
-                  />
-                </svg>
-              </motion.div>
-            </span>
-            <span>rth 2026</span>
+Hack the North 2026
           </motion.h1>
           <motion.p
             className="text-lg text-gray-400"

@@ -22,7 +22,6 @@ export function LoginModal({ onClose, onLogin }: LoginModalProps) {
 
   return (
     <>
-      {/* Overlay */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -31,7 +30,6 @@ export function LoginModal({ onClose, onLogin }: LoginModalProps) {
         className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50"
       />
 
-      {/* Modal */}
       <motion.div
         initial={{ opacity: 0, scale: 0.9, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -40,11 +38,9 @@ export function LoginModal({ onClose, onLogin }: LoginModalProps) {
         className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md z-50"
       >
         <div className="bg-[#0f1117]/95 border border-white/10 rounded-2xl p-8 backdrop-blur-2xl relative overflow-hidden">
-          {/* Glow effects */}
-          <div className="absolute top-0 left-0 w-64 h-64 bg-[#a855f7] rounded-full blur-[120px] opacity-10 pointer-events-none"></div>
-          <div className="absolute bottom-0 right-0 w-64 h-64 bg-[#ec4899] rounded-full blur-[120px] opacity-10 pointer-events-none"></div>
+          <div className="absolute top-0 left-0 w-64 h-64 bg-[#a855f7] rounded-full blur-[120px] opacity-10 pointer-events-none" />
+          <div className="absolute bottom-0 right-0 w-64 h-64 bg-[#ec4899] rounded-full blur-[120px] opacity-10 pointer-events-none" />
 
-          {/* Close button */}
           <button
             onClick={onClose}
             className="absolute top-4 right-4 p-2 hover:bg-white/10 rounded-lg transition-all border border-white/10 hover:border-[#a855f7]"
@@ -52,7 +48,6 @@ export function LoginModal({ onClose, onLogin }: LoginModalProps) {
             <X className="w-5 h-5" />
           </button>
 
-          {/* Header */}
           <div className="text-center mb-8 relative z-10">
             <motion.div
               className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-[#a855f7] to-[#ec4899] flex items-center justify-center"
@@ -63,11 +58,7 @@ export function LoginModal({ onClose, onLogin }: LoginModalProps) {
                   '0 0 20px rgba(168, 85, 247, 0.4)',
                 ],
               }}
-              transition={{
-                duration: 2,
-                repeat: Infinity,
-                ease: 'easeInOut',
-              }}
+              transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
             >
               <User className="w-8 h-8 text-white" />
             </motion.div>
@@ -79,7 +70,6 @@ export function LoginModal({ onClose, onLogin }: LoginModalProps) {
             </p>
           </div>
 
-          {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-4 relative z-10">
             <div className="relative">
               <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
@@ -120,12 +110,11 @@ export function LoginModal({ onClose, onLogin }: LoginModalProps) {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
-              <div className="absolute inset-0 bg-gradient-to-r from-[#a855f7] to-[#ec4899] rounded-xl blur-lg opacity-0 group-hover:opacity-50 transition-opacity duration-300"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-[#a855f7] to-[#ec4899] rounded-xl blur-lg opacity-0 group-hover:opacity-50 transition-opacity duration-300" />
               <span className="relative z-10">Sign In</span>
             </motion.button>
           </form>
 
-          {/* Hint */}
           <p className="text-center text-gray-500 text-xs mt-6 relative z-10">
             Hint: username is "hacker", password is "htn2026"
           </p>

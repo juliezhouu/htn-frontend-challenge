@@ -23,6 +23,60 @@
   animation: float linear infinite;
 }
 
+/* Starfield and twinkle animations */
+@keyframes twinkle {
+  0% { opacity: 0.15; transform: scale(0.9); }
+  50% { opacity: 1; transform: scale(1.2); }
+  100% { opacity: 0.15; transform: scale(0.9); }
+}
+
+@keyframes slow-drift {
+  0% { transform: translateY(0) translateX(0); }
+  50% { transform: translateY(-6px) translateX(3px); }
+  100% { transform: translateY(0) translateX(0); }
+}
+
+@keyframes shoot {
+  0% { transform: translateX(-10vw) translateY(-10vh) rotate(25deg); opacity: 0; }
+  10% { opacity: 1; }
+  100% { transform: translateX(120vw) translateY(40vh) rotate(25deg); opacity: 0; }
+}
+
+.starfield {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.star {
+  position: absolute;
+  border-radius: 9999px;
+  background: radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(168,85,247,0.45) 50%, transparent 100%);
+  box-shadow: 0 0 6px rgba(168,85,247,0.15), 0 0 12px rgba(6,182,212,0.06);
+  transform-origin: center;
+  will-change: transform, opacity;
+  animation-name: twinkle, slow-drift;
+  animation-iteration-count: infinite, infinite;
+  animation-timing-function: ease-in-out, ease-in-out;
+}
+
+.shooting-star {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 2px;
+  height: 80px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(168,85,247,0.15));
+  filter: blur(1px);
+  transform-origin: 0 0;
+  opacity: 0;
+  will-change: transform, opacity;
+  animation-name: shoot;
+  animation-timing-function: cubic-bezier(.4,0,.2,1);
+  animation-iteration-count: infinite;
+}
+
 /* Smooth scrolling */
 html {
   scroll-behavior: smooth;

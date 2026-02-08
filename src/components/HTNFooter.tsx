@@ -271,7 +271,7 @@ export function HTNFooter() {
             >
               ♥
             </motion.span>{' '}
-            by HTN Team
+            by julie
           </motion.p>
         </div>
       </div>

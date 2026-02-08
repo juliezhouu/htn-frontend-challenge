@@ -25,11 +25,11 @@ export function HTNHeader({ isLoggedIn, onLogin, onLogout }: HTNHeaderProps) {
               whileHover={{ scale: 1.05 }}
               transition={{ type: 'spring', stiffness: 400, damping: 10 }}
             >
-              <motion.div
-                className="absolute inset-0 rounded-full opacity-0"
-                style={{
-                  background: 'radial-gradient(circle, rgba(168, 85, 247, 0.4), transparent 70%)',
-                  filter: 'blur(20px)',
+            <motion.div
+              className="absolute inset-0 rounded-full opacity-0"
+              style={{
+                background: 'radial-gradient(circle, rgba(168, 85, 247, 0.4), transparent 70%)',
+                filter: 'blur(20px)',
                 }}
                 whileHover={{ opacity: 1 }}
                 transition={{ duration: 0.3 }}
