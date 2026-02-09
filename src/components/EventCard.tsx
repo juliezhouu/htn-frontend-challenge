@@ -35,9 +35,9 @@ export function EventCard({ event, onViewDetails, isLast, dragHandleProps, isDra
           </div>
         )}
 
-        <div className="flex items-center gap-6 flex-1 cursor-pointer" onClick={onViewDetails}>
+        <div className="flex items-center gap-4 md:gap-6 flex-1 cursor-pointer select-none" onClick={onViewDetails}>
           <motion.div
-            className="relative flex-shrink-0"
+            className="relative flex-shrink-0 hidden sm:block"
             whileHover={{ scale: 1.05 }}
             transition={{ duration: 0.3 }}
           >
@@ -45,13 +45,13 @@ export function EventCard({ event, onViewDetails, isLast, dragHandleProps, isDra
             <img
               src={event.thumbnail}
               alt={event.title}
-              className="w-24 h-24 object-cover rounded-lg relative z-10 ring-1 ring-white/10 group-hover:ring-[#a855f7]/50 transition-all duration-300"
+              className="w-20 h-20 md:w-24 md:h-24 object-cover rounded-lg relative z-10 ring-1 ring-white/10 group-hover:ring-[#a855f7]/50 transition-all duration-300"
             />
           </motion.div>
 
           <div className="flex-1 min-w-0">
-            <div className="flex items-start justify-between gap-4 mb-2">
-              <h3 className="text-xl font-medium group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-[#06b6d4] group-hover:via-[#a855f7] group-hover:to-[#ec4899] group-hover:bg-clip-text transition-all duration-300">
+            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2 mb-2">
+              <h3 className="text-base md:text-xl font-medium group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-[#06b6d4] group-hover:via-[#a855f7] group-hover:to-[#ec4899] group-hover:bg-clip-text transition-all duration-300">
                 {event.title}
               </h3>
               <div className="flex items-center gap-2 flex-shrink-0">
@@ -60,27 +60,27 @@ export function EventCard({ event, onViewDetails, isLast, dragHandleProps, isDra
                     Private
                   </span>
                 )}
-                <span className="px-3 py-1 bg-gradient-to-r from-[#a855f7]/20 to-[#ec4899]/20 border border-[#a855f7]/30 rounded-full text-sm">
+                <span className="px-3 py-1 bg-gradient-to-r from-[#a855f7]/20 to-[#ec4899]/20 border border-[#a855f7]/30 rounded-full text-xs md:text-sm">
                   {event.category}
                 </span>
               </div>
             </div>
 
-            <div className="flex items-center gap-6 text-sm text-gray-400 flex-wrap">
-              <div className="flex items-center gap-2">
-                <Calendar className="w-4 h-4 text-[#06b6d4]" />
+            <div className="flex items-center gap-3 md:gap-6 text-xs md:text-sm text-gray-400 flex-wrap">
+              <div className="flex items-center gap-1.5">
+                <Calendar className="w-3.5 h-3.5 md:w-4 md:h-4 text-[#06b6d4]" />
                 <span>{event.date}</span>
               </div>
-              <div className="flex items-center gap-2">
-                <Clock className="w-4 h-4 text-[#a855f7]" />
+              <div className="flex items-center gap-1.5">
+                <Clock className="w-3.5 h-3.5 md:w-4 md:h-4 text-[#a855f7]" />
                 <span>{event.time}</span>
               </div>
-              <div className="flex items-center gap-2">
-                <MapPin className="w-4 h-4 text-[#ec4899]" />
+              <div className="hidden sm:flex items-center gap-1.5">
+                <MapPin className="w-3.5 h-3.5 md:w-4 md:h-4 text-[#ec4899]" />
                 <span>{event.location}</span>
               </div>
               {event.speakers && event.speakers.length > 0 && (
-                <div className="flex items-center gap-2">
+                <div className="hidden md:flex items-center gap-1.5">
                   <Users className="w-4 h-4 text-[#f59e0b]" />
                   <span>{event.speakers.length} speaker{event.speakers.length > 1 ? 's' : ''}</span>
                 </div>

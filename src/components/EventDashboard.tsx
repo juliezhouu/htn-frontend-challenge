@@ -159,7 +159,10 @@ export function EventDashboard() {
         >
           Showing {filteredEvents.length} of {events.length} events
           {!isLoggedIn && (
-            <span className="text-[#a855f7] ml-2">
+            <span
+              className="text-[#a855f7] ml-2 cursor-pointer hover:underline"
+              onClick={() => setShowLoginModal(true)}
+            >
               (Sign in to see private events)
             </span>
           )}

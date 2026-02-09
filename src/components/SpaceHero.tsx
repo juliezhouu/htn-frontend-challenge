@@ -1,6 +1,6 @@
-import { motion } from 'motion/react';
-import { Search, Filter } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
+import { Search, Filter, ChevronDown } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
 
 import planetImg from '../assets/images/planet.png';
 import princeImg from '../assets/images/petitprince-removebg-preview.png';
@@ -53,6 +53,19 @@ export function SpaceHero({
   const moonTransparent = useTransparentImage(moonImg);
   const starTransparent = useTransparentImage(starImg);
   const shineTransparent = useTransparentImage(shineImg);
+
+  const [filterOpen, setFilterOpen] = useState(false);
+  const filterRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (filterRef.current && !filterRef.current.contains(e.target as Node)) {
+        setFilterOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   // generate a small starfield
   const stars = Array.from({ length: 64 }).map((_, i) => {
@@ -168,9 +181,9 @@ export function SpaceHero({
         ))}
       </div>
 
-      {/* rotating planet + prince appear together */}
+      {/* rotating planet with prince - hidden on mobile */}
       <motion.div
-        className="absolute right-[3%] bottom-[5%] z-20 w-[240px] h-[240px] md:w-[300px] md:h-[300px]"
+        className="hidden sm:block absolute right-[3%] bottom-[5%] z-20 w-[180px] h-[180px] md:w-[240px] md:h-[240px]"
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1, delay: 0.3 }}
@@ -185,11 +198,10 @@ export function SpaceHero({
             className="w-full h-full object-contain drop-shadow-[0_0_25px_rgba(168,85,247,0.4)]"
           />
         </div>
-        {/* prince */}
         <img
           src={princeImg}
           alt="The Little Prince"
-          className="absolute top-[-25%] left-1/2 -translate-x-1/2 w-[45%] object-contain drop-shadow-[0_0_15px_rgba(255,200,80,0.5)] -scale-x-100"
+          className="absolute top-[-20%] left-1/2 -translate-x-1/2 w-[60px] md:w-[75px] object-contain drop-shadow-[0_0_15px_rgba(255,200,80,0.5)] -scale-x-100"
         />
       </motion.div>
 
@@ -247,7 +259,7 @@ export function SpaceHero({
           className="text-center mb-8"
         >
           <motion.h1
-            className="text-6xl font-black mb-4 relative inline-block"
+            className="text-3xl md:text-6xl font-black mb-4 relative inline-block"
             style={{
               textShadow: `
                 0 1px 0 #7c3aed,
@@ -297,7 +309,7 @@ Hack the North 2026
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
-          className="flex items-center gap-4 w-full max-w-3xl"
+          className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full max-w-3xl"
         >
           <div className="relative flex-1">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
@@ -312,24 +324,43 @@ Hack the North 2026
               }}
             />
           </div>
-          <div className="relative">
-            <Filter className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500 pointer-events-none z-10" />
-            <select
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-              className="pl-12 pr-8 py-3.5 bg-white/5 border border-white/10 rounded-xl appearance-none cursor-pointer focus:outline-none focus:border-[#a855f7]/50 focus:bg-white/10 transition-all backdrop-blur-xl min-w-[200px] text-white"
+          <div className="relative" ref={filterRef}>
+            <button
+              onClick={() => setFilterOpen(!filterOpen)}
+              className="w-full flex items-center gap-2 pl-12 pr-10 py-3.5 bg-white/5 border border-white/10 rounded-xl cursor-pointer focus:outline-none focus:border-[#a855f7]/50 focus:bg-white/10 transition-all backdrop-blur-xl sm:min-w-[160px] text-white text-sm text-left"
             >
-              {categories.map((category) => (
-                <option key={category} value={category} className="bg-[#1a1a1a]">
-                  {category}
-                </option>
-              ))}
-            </select>
-            <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
-              <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-              </svg>
-            </div>
+              <Filter className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+              {selectedCategory}
+              <ChevronDown className={`absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 transition-transform ${filterOpen ? 'rotate-180' : ''}`} />
+            </button>
+            <AnimatePresence>
+              {filterOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: -4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -4 }}
+                  transition={{ duration: 0.15 }}
+                  className="absolute top-full mt-2 left-0 right-0 bg-[#1a1a2e]/95 border border-white/10 rounded-xl backdrop-blur-xl overflow-hidden z-50"
+                >
+                  {categories.map((category) => (
+                    <button
+                      key={category}
+                      onClick={() => {
+                        setSelectedCategory(category);
+                        setFilterOpen(false);
+                      }}
+                      className={`w-full text-left px-4 py-2.5 text-sm cursor-pointer transition-colors ${
+                        selectedCategory === category
+                          ? 'bg-[#a855f7]/20 text-white'
+                          : 'text-gray-300 hover:bg-white/5 hover:text-white'
+                      }`}
+                    >
+                      {category}
+                    </button>
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </motion.div>
       </div>
