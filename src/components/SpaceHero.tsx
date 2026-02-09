@@ -56,6 +56,8 @@ export function SpaceHero({
 
   const [filterOpen, setFilterOpen] = useState(false);
   const filterRef = useRef<HTMLDivElement>(null);
+  const filterBtnRef = useRef<HTMLButtonElement>(null);
+  const [dropdownPos, setDropdownPos] = useState({ top: 0, left: 0, width: 0 });
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -326,7 +328,14 @@ Hack the North 2026
           </div>
           <div className="relative" ref={filterRef}>
             <button
-              onClick={() => setFilterOpen(!filterOpen)}
+              ref={filterBtnRef}
+              onClick={() => {
+                if (!filterOpen && filterBtnRef.current) {
+                  const rect = filterBtnRef.current.getBoundingClientRect();
+                  setDropdownPos({ top: rect.bottom + 8, left: rect.left, width: rect.width });
+                }
+                setFilterOpen(!filterOpen);
+              }}
               className="w-full flex items-center gap-2 pl-12 pr-10 py-3.5 bg-white/5 border border-white/10 rounded-xl cursor-pointer focus:outline-none focus:border-[#a855f7]/50 focus:bg-white/10 transition-all backdrop-blur-xl sm:min-w-[160px] text-white text-sm text-left"
             >
               <Filter className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
@@ -336,11 +345,12 @@ Hack the North 2026
             <AnimatePresence>
               {filterOpen && (
                 <motion.div
-                  initial={{ opacity: 0, y: 4 }}
+                  initial={{ opacity: 0, y: -4 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 4 }}
+                  exit={{ opacity: 0, y: -4 }}
                   transition={{ duration: 0.15 }}
-                  className="absolute bottom-full mb-2 left-0 right-0 bg-[#1a1a2e]/95 border border-white/10 rounded-xl backdrop-blur-xl overflow-hidden z-50"
+                  className="fixed bg-[#1a1a2e]/95 border border-white/10 rounded-xl backdrop-blur-xl overflow-hidden z-[100]"
+                  style={{ top: dropdownPos.top, left: dropdownPos.left, width: dropdownPos.width }}
                 >
                   {categories.map((category) => (
                     <button
