@@ -25,7 +25,7 @@ export function HTNHeader({ isLoggedIn, onLogin, onLogout }: HTNHeaderProps) {
               whileHover={{ scale: 1.05 }}
               transition={{ type: 'spring', stiffness: 400, damping: 10 }}
             >
-              <img src={htnLogo} alt="Hack the North" className="h-10 relative z-10" />
+              <img src={htnLogo} alt="Hack the North" className="h-7 md:h-10 relative z-10" />
             </motion.div>
           </motion.div>
 

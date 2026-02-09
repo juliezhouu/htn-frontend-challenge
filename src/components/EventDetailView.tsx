@@ -1,4 +1,4 @@
-import { X, Calendar, MapPin, Clock, Users } from 'lucide-react';
+import { X, Calendar, MapPin, Clock, Users, ChevronLeft } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Event } from './types';
 import { StaggeredFadeText } from './StaggeredFadeText';
@@ -39,14 +39,24 @@ export function EventDetailView({ event, allEvents, onClose, onEventChange }: Ev
         {/* Inner glow effect */}
         <div className="absolute top-0 right-0 w-96 h-96 bg-[#a855f7] rounded-full blur-[150px] opacity-10 pointer-events-none"></div>
 
-        <div className="p-8 relative z-10">
-          {/* Close Button */}
+        {/* Sticky close bar */}
+        <div className="sticky top-0 z-20 flex items-center justify-between px-4 py-3 bg-[#0b0e14]/90 backdrop-blur-xl border-b border-white/5">
           <button
             onClick={onClose}
-            className="absolute top-6 right-6 p-2 hover:bg-white/10 rounded-lg transition-all duration-300 border border-white/10 hover:border-[#a855f7]"
+            className="flex items-center gap-1 px-3 py-2 text-sm text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-all cursor-pointer"
           >
-            <X className="w-6 h-6" />
+            <ChevronLeft className="w-5 h-5" />
+            <span>Back</span>
           </button>
+          <button
+            onClick={onClose}
+            className="p-2 hover:bg-white/10 rounded-lg transition-all border border-white/10 hover:border-[#a855f7] cursor-pointer"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        <div className="p-6 sm:p-8 relative z-10">
 
           {/* Event Image */}
           <div className="relative mb-6">

@@ -86,7 +86,7 @@ export function SpaceHero({
 
 
   return (
-    <div className="relative h-[450px] overflow-hidden bg-gradient-to-b from-[#0b0e14] via-[#1a1525] to-[#0b0e14]">
+    <div className="relative h-[520px] overflow-hidden bg-gradient-to-b from-[#0b0e14] via-[#1a1525] to-[#0b0e14]">
       {/* gradient orbs */}
       <motion.div
         className="absolute top-[-10%] left-[-5%] w-[500px] h-[500px] rounded-full opacity-20"
@@ -181,15 +181,15 @@ export function SpaceHero({
         ))}
       </div>
 
-      {/* rotating planet with prince - hidden on mobile */}
+      {/* rotating planet with prince (hidden on mobile) */}
       <motion.div
-        className="hidden sm:block absolute right-[3%] bottom-[5%] z-20 w-[180px] h-[180px] md:w-[240px] md:h-[240px]"
+        className="hidden sm:block absolute right-[3%] bottom-[18%] z-20 w-[180px] h-[180px] md:w-[240px] md:h-[240px]"
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1, delay: 0.3 }}
       >
         <div
-          className="w-full h-full"
+          className="relative w-full h-full"
           style={{ animation: 'spin-slow 40s linear infinite' }}
         >
           <img
@@ -197,12 +197,12 @@ export function SpaceHero({
             alt=""
             className="w-full h-full object-contain drop-shadow-[0_0_25px_rgba(168,85,247,0.4)]"
           />
+          <img
+            src={princeImg}
+            alt="The Little Prince"
+            className="absolute top-[-19%] left-1/2 -translate-x-1/2 w-[65px] md:w-[80px] object-contain drop-shadow-[0_0_15px_rgba(255,200,80,0.5)] -scale-x-100"
+          />
         </div>
-        <img
-          src={princeImg}
-          alt="The Little Prince"
-          className="absolute top-[-20%] left-1/2 -translate-x-1/2 w-[60px] md:w-[75px] object-contain drop-shadow-[0_0_15px_rgba(255,200,80,0.5)] -scale-x-100"
-        />
       </motion.div>
 
       {/* dangling elements hanging from top */}
@@ -336,11 +336,11 @@ Hack the North 2026
             <AnimatePresence>
               {filterOpen && (
                 <motion.div
-                  initial={{ opacity: 0, y: -4 }}
+                  initial={{ opacity: 0, y: 4 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -4 }}
+                  exit={{ opacity: 0, y: 4 }}
                   transition={{ duration: 0.15 }}
-                  className="absolute top-full mt-2 left-0 right-0 bg-[#1a1a2e]/95 border border-white/10 rounded-xl backdrop-blur-xl overflow-hidden z-50"
+                  className="absolute bottom-full mb-2 left-0 right-0 bg-[#1a1a2e]/95 border border-white/10 rounded-xl backdrop-blur-xl overflow-hidden z-50"
                 >
                   {categories.map((category) => (
                     <button
